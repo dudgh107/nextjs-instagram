@@ -10,25 +10,29 @@ import NewFillIcon from "./ui/icons/NewFillIcon";
 import ColorButton from "./ui/ColorButton";
 import { useSession, signIn, signOut } from "next-auth/react"
 import Avatar from "./Avatar";
+import { title } from "process";
 
 const menu = [
     {
         href: '/', 
         icon: <HomeIcon/>, 
         clickedIcon:<HomeFillIcon/>,
+        title: 'Home',
     },
     {
         href: '/search', 
         icon: <SearchIcon/>, 
         clickedIcon:<SearchFillIcon/>,
+        title: 'Search users',
     },
     {
         href: '/new', 
         icon: <NewIcon/>, 
         clickedIcon:<NewFillIcon/>,
+        title: 'New post',
     },
 ]
-export default function Header() {
+export default function   Header() {
     const pathName = usePathname();
     
     const { data: session } = useSession();
@@ -37,14 +41,14 @@ export default function Header() {
     return (
         <header className="sticky top-0 bg-white z-10  border-b">
             <div className="flex justify-between items-center px-6">
-            <Link href="/">
+            <Link href="/" aria-label='Home'>
                 <h1 className="text-3xl font-bold">Instantgram</h1>
             </Link>
             <nav >
                 <ul className='flex gap-4 items-center p-4'>
                     {
                         menu.map(item=> <li key={item.href}>
-                            <Link href={item.href}>
+                            <Link href={item.href} aria-label={item.title}>
                                 {pathName === item.href ? item.clickedIcon : item.icon}
                             </Link>
                         </li>)

@@ -38,7 +38,7 @@ export default function PostListCard({post, priority=false}: Props) {
                 }
                 {comment > 0 && 
                 <button 
-                className="font-bold my-2 text-sky-500"
+                className="font-bold my-2 text-sky-700"
                 onClick={()=> setOpenModel(true)}>{`View all ${comment} comments`}</button>}
             </ActionBar>
             
