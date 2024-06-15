@@ -132,3 +132,16 @@ export async function createPost(userId: string, text: string, file: Blob) {
         }, {autoGenerateArrayKeys:true})
     })
 }
+
+export async function createUser(userId: string, userName: string, email:string, password:string) {
+    console.log(userId, userName, email);
+
+    return client.create({
+        _type: 'user',
+        username: userId,
+        name: userName,
+        email: email,
+        password: password
+    }, {autoGenerateArrayKeys: true})
+
+}

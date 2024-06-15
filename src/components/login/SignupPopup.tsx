@@ -6,10 +6,12 @@ import { useRouter } from 'next/navigation';
 import GridSpinner from '../ui/GridSpinner';
 
 export default function SignupPopup() {
-
+    const router = useRouter();
     const [error, setError] = useState<string>();
     const [loading, setLoading] = useState(false);
     const [signup, setSignup] = useState({
+        id: '',
+        username: '',
         email: '',
         password: '',
         confirmpassword: ''
@@ -21,7 +23,17 @@ export default function SignupPopup() {
         //이메일, 패스워드 저장
         //pasword
 
-        const {email, password,confirmpassword} = signup;
+        const {id, username,email, password,confirmpassword} = signup;
+
+        if(id == ''){
+            alert('id를 입력하세요.');
+            return false;
+        }
+
+        if(username == ''){
+            alert('이름을 입력하세요.');
+            return false;
+        }
 
         if(email == ''){
             alert('이메일을 입력하세요.');
@@ -69,6 +81,7 @@ export default function SignupPopup() {
                 setError('등록중 에러가 발생했습니다.');
                 return;
             }
+            router.push('/')
         })
             .catch(err => setError('등록중 에러가 발생했습니다.'))
             .finally(() => setLoading(false));
@@ -87,28 +100,57 @@ export default function SignupPopup() {
                         <h1 className="text-4xl font-bold text-gray-600 text-center">Create account</h1>
                         <div className="mt-3 text-center text-base font-medium text-gray-500">Already have account? <a className="underline text-purple-600" href="#">Sign in</a></div>
                         <div className="w-full mt-6">
+
                             <div className="w-full mt-4">
-                                <input type="email" className="w-full py-2.5 px-4 rounded-lg bg-gray-100 focus:shadow focus:bg-white focus:outline-none" id="email" name="email" placeholder="Email"
+                                <input type="text"
+                                       className="w-full py-2.5 px-4 rounded-lg bg-gray-100 focus:shadow focus:bg-white focus:outline-none"
+                                       id="id" name="id" placeholder="id"
+                                       value={signup.id}
+                                       onChange={e => setSignup({...signup, id: e.target.value})}
+                                />
+                            </div>
+                            <div className="w-full mt-4">
+
+                                <input type="text"
+                                       className="w-full py-2.5 px-4 rounded-lg bg-gray-100 focus:shadow focus:bg-white focus:outline-none"
+                                       id="username" name="username" placeholder="username"
+                                       value={signup.username}
+                                       onChange={e => setSignup({...signup, username: e.target.value})}
+                                />
+                            </div>
+
+                            <div className="w-full mt-4">
+                                <input type="email"
+                                       className="w-full py-2.5 px-4 rounded-lg bg-gray-100 focus:shadow focus:bg-white focus:outline-none"
+                                       id="email" name="email" placeholder="Email"
                                        value={signup.email}
-                                       onChange={e=> setSignup({...signup , email : e.target.value})}
+                                       onChange={e => setSignup({...signup, email: e.target.value})}
                                 />
                             </div>
                             <div className="w-full  mt-4 flex justify-between">
-                                <input type="password" className="bg-gray-100 w-6/12 py-2.5 px-4 rounded-l-lg border-r-2 border-white focus:shadow focus:bg-white focus:outline-none" id="password" name="pasword" placeholder="Password"
+                                <input type="password"
+                                       className="bg-gray-100 w-6/12 py-2.5 px-4 rounded-l-lg border-r-2 border-white focus:shadow focus:bg-white focus:outline-none"
+                                       id="password" name="pasword" placeholder="Password"
                                        value={signup.password}
-                                       onChange={e=> setSignup({...signup , password : e.target.value})}
+                                       onChange={e => setSignup({...signup, password: e.target.value})}
                                 />
-                                <input type="password" className="bg-gray-100 w-6/12 py-2.5 px-4 rounded-r-lg border-l-2 border-white focus:shadow focus:bg-white focus:outline-none" id="confirmpassword" name="confirmpassword" placeholder="Confirm password"
+                                <input type="password"
+                                       className="bg-gray-100 w-6/12 py-2.5 px-4 rounded-r-lg border-l-2 border-white focus:shadow focus:bg-white focus:outline-none"
+                                       id="confirmpassword" name="confirmpassword" placeholder="Confirm password"
                                        value={signup.confirmpassword}
-                                       onChange={e=> setSignup({...signup , confirmpassword : e.target.value})}
+                                       onChange={e => setSignup({...signup, confirmpassword: e.target.value})}
                                 />
                             </div>
                             <div className="w-full mt-4">
-                                <button id="signup" className="w-full font-normal text-xl text-white bg-purple-400 py-2.5 rounded-lg">Sign up</button>
+                                <button id="signup"
+                                        className="w-full font-normal text-xl text-white bg-purple-400 py-2.5 rounded-lg">Sign
+                                    up
+                                </button>
                             </div>
                             <div className="w-full mt-5">
                                 <label className="inline-flex items-center font-medium">
-                                    <input type="checkbox" className="h-5 w-5"/><span className="ml-2 text-gray-500">I have read and agree to the</span><span className="text-purple-500">&nbsp;Term of Service</span>
+                                    <input type="checkbox" className="h-5 w-5"/><span className="ml-2 text-gray-500">I have read and agree to the</span><span
+                                    className="text-purple-500">&nbsp;Term of Service</span>
                                 </label>
                             </div>
                         </div>
