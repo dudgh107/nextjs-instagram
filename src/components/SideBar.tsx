@@ -18,7 +18,7 @@ export default function SideBar({user: {name, username, image}}: Props) {
                 About . Help . Press . Api. Jobs . Privacy . Terms . Location . Langage
             </p>
             <p className="font-bold text-sm text-neutral-500 mt-8">
-                @Copyright Instantgram from METAl
+                @Copyright NAVIKO from METAl
             </p>
         </>
     );

@@ -39,10 +39,10 @@ export default function   Header() {
     const user = session?.user;
     
     return (
-        <header className="sticky top-0 bg-white z-10  border-b">
+        <header className="sticky top-0 bg-white z-10  border-b bg-gradient-to-r from-sky-300 to-indigo-400">
             <div className="flex justify-between items-center px-6">
             <Link href="/" aria-label='Home'>
-                <h1 className="text-3xl font-bold">Instantgram</h1>
+                <h1 className="text-3xl font-bold">NAVIKO</h1>
             </Link>
             <nav >
                 <ul className='flex gap-4 items-center p-4'>

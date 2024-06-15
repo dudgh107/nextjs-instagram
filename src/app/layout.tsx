@@ -9,7 +9,7 @@ const openSans = Open_Sans({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Signin',
-  description: 'Signup or Login to Instantgram',
+  description: 'Signup or Login to NAVIKO',
 }
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={openSans.className}>
-      <body className='w-full bg-neutral-50 overflow-auto'>
+      <body className='w-full bg-neutral-50 overflow-auto bg-gradient-to-r from-sky-200 to-indigo-300'>
         <AuthContext>
           <div className='max-w-screen-xl mx-auto'>
             <Header />
