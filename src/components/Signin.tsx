@@ -3,12 +3,12 @@ import { BuiltInProviderType } from "next-auth/providers/index";
 import { ClientSafeProvider, LiteralUnion, signIn } from "next-auth/react";
 import ColorButton from "./ui/ColorButton";
 import { FaGoogle } from 'react-icons/fa';
-import { FormEvent, useState } from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import ModealPortal from './ui/ModealPortal';
-import PostModal from './PostModal';
-import PostDetail from './PostDetail';
 import SignupPopup from './login/SignupPopup';
 import LoginModal from './login/LoginModal';
+import GridSpinner from "@/components/ui/GridSpinner";
+import {useRouter} from "next/navigation";
 
 
 type Props = {
@@ -16,8 +16,13 @@ type Props = {
     callbackUrl : string
 }
 export default function Signin({providers, callbackUrl}: Props) {
+    const [login, setLogin] = useState('');
+    const [error, setError] = useState<string | undefined | null>();
+    const [loading, setLoading] = useState(false);
+    const emailRef = useRef<HTMLInputElement >(null);
+    const passwordRef = useRef<HTMLInputElement >(null);
+    const router = useRouter();
 
-    //credentials
     let credentalsId = '';
     let googleId = '';
 
@@ -36,14 +41,40 @@ export default function Signin({providers, callbackUrl}: Props) {
 
     const handleSubmit = async (e:any) => {
         e.preventDefault();
-        signIn(credentalsId, {callbackUrl});
-    }
 
+        //signIn(credentalsId, {emailRef : emailRef.current?.value, passwordRef:await bcrypt.hash(passwordRef.current?.value, 10), callbackUrl});
+        setLoading(true);
+        const result = await signIn('credentials', {
+            email: emailRef.current?.value,
+            password: passwordRef.current?.value,
+            redirect: false,
+            callbackUrl: callbackUrl,
+        }).catch(err => setError('로그인중 에러가 발생했습니다.'))
+            .finally(() => setLoading(false));
+
+        //console.log('------------signIn결과 user'+JSON.stringify(result?.error));
+        //const {error : string} = result;
+        //const resultString = JSON.stringify(result);
+
+        if(result && 'error' in result){
+            setError(result.error);
+        }
+
+
+        if(!error)
+        {
+            router.push('/')
+        }
+
+    }
     const handleGoogleLogin = async (e:any) => {
         e.preventDefault();
         signIn(googleId, {callbackUrl});
     }
 
+    const handleCloseModel = useCallback(() => {
+        setOpenModel(false);
+    }, []);
 
     const [openModel, setOpenModel] = useState(false);
 
@@ -64,7 +95,9 @@ export default function Signin({providers, callbackUrl}: Props) {
                                     <i className="fas fa-envelope mr-2"></i>Email
                                 </label>
                                 <div>
-                                    <input id="email" type="email" className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter your email"/>
+                                    <input id="email" type="email" className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter your email"
+                                           ref={emailRef}
+                                    />
                                 </div>
                             </div>
                             <div className="mb-6">
@@ -72,7 +105,9 @@ export default function Signin({providers, callbackUrl}: Props) {
                                     <i className="fas fa-lock mr-2"></i>Password
                                 </label>
                                 <div>
-                                    <input id="password" type="password" className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter your password"/>
+                                    <input id="password" type="password" className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter your password"
+                                           ref={passwordRef}
+                                    />
                                 </div>
                             </div>
                             <div className="flex items-center justify-center">
@@ -83,6 +118,10 @@ export default function Signin({providers, callbackUrl}: Props) {
                             <div className="text-center mt-4">
                                 <a href="#" className="text-gray-600 hover:underline">Forgot password?</a>
                             </div>
+                            {loading && <div className='absolute inset-0 z-20 text-center pt-[30%] bg-sky-500/20'><GridSpinner/></div>}
+                            {
+                                error && <p className='w-full bg-red-100 text-red-500 text-center p-4 mb-4 font-bold'>{error}</p>
+                            }
                         </form>
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
                         <p className="text-center text-gray-600 mt-6">Don't have an account? <a href="#" onClick={()=> setOpenModel(true)} className="text-blue-500 hover:underline">Sign up</a></p>
@@ -108,7 +147,7 @@ export default function Signin({providers, callbackUrl}: Props) {
             {
                 openModel && <ModealPortal>
                     <LoginModal onClose={() => setOpenModel(false)}>
-                        <SignupPopup/>
+                        <SignupPopup closeModel={handleCloseModel}/>
                     </LoginModal>
                 </ModealPortal>
             }
