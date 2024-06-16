@@ -6,6 +6,14 @@ export type AuthUser = {
     image: string | null;
 };
 
+export type UserBasicInfo = {
+    id: string;
+    name: string;
+    username: string;
+    email: string;
+    password: string;
+};
+
 export type followingDetail = {
     id: string;
     username: string;

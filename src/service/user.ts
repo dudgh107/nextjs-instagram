@@ -1,7 +1,7 @@
 import { profile } from "console";
 import { client } from "./sanity";
 import { Profile } from "next-auth";
-import { HomeUser, ProfileUser, SearchUser } from "@/model/user";
+import {HomeUser, ProfileUser, SearchUser, UserBasicInfo} from "@/model/user";
 
 type OAuthUser = {
     id: string;
@@ -59,6 +59,21 @@ export async function searchUsers(keyword?: string) {
         `
 
     ).then((users) => users.map((user : SearchUser) => ({...user, following: user.following ?? 0, followers: user.followers ?? 0})));
+}
+
+export async function inquireUser(email:string) {
+    //const query = `&& (email match "${email}") && (password match "${password}")`
+    const query = `&& (email match "${email}")`
+
+    return client.fetch(
+        `*[_type=="user" ${query}][0]{
+              "username"  : username,
+              "name" : name,
+              "password" :password,
+              "email" : email
+            }
+        `
+    );
 }
 
 export async function getUserForProfile(username: string) {

@@ -5,7 +5,10 @@ import useMe from '@/hooks/me';
 import { useRouter } from 'next/navigation';
 import GridSpinner from '../ui/GridSpinner';
 
-export default function SignupPopup() {
+interface SignupPopupProps {
+    closeModel: () => void;
+}
+export default function SignupPopup({closeModel}: SignupPopupProps) {
     const router = useRouter();
     const [error, setError] = useState<string>();
     const [loading, setLoading] = useState(false);
@@ -81,7 +84,8 @@ export default function SignupPopup() {
                 setError('등록중 에러가 발생했습니다.');
                 return;
             }
-            router.push('/')
+            //alert('11');
+            closeModel();
         })
             .catch(err => setError('등록중 에러가 발생했습니다.'))
             .finally(() => setLoading(false));

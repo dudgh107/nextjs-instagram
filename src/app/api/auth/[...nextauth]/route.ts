@@ -18,7 +18,7 @@ const authOptions :NextAuthOptions = {
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        email: { label: "Email", type: "text", placeholder: "이메일 주소 입력해주세요." },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
@@ -28,20 +28,42 @@ const authOptions :NextAuthOptions = {
         // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
-        console.log('------------1111-----------------------'+JSON.stringify(req));
-        const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
+        console.log('------------1111-----------------------'+JSON.stringify(credentials));
 
-        // const res = await fetch("/your/endpoint", {
-        //   method: 'POST',
-        //   body: JSON.stringify(credentials),
-        //   headers: { "Content-Type": "application/json" }
-        // })
-        // const user = await res.json()
+        //로그인처리
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/login`, {
+          method: 'POST',
+          body: JSON.stringify({
+            email: credentials?.email,
+            password: credentials?.password,
+          }),
+          headers: { "Content-Type": "application/json" }
+        })
+        const user = await res.json()
+        console.log('------------조회 user'+JSON.stringify(user));
+
+        const {rcode} = user;
+
+        if(rcode== '00'){
+          if (user) {
+            return user
+          }
+        }
+        else if(rcode== '10'){
+          throw new Error('비밀번호가 잘못되었습니다.') // If password is wrong
+
+        }
+        else if(rcode== '90'){
+          throw new Error('존재하지 않는 E-mail입니다.') // If password is wrong
+        }
+
+        //console.log('------------조회 rcode='+JSON.stringify(rcode));
+
         // If no error and we have user data, return it
         if (user) {
           return user
         }
-
+        //const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
         return null
       }
     })
@@ -51,12 +73,13 @@ const authOptions :NextAuthOptions = {
   ],
   callbacks: {
     async signIn({user: {id, name, image, email}}) {
-      
+
+      console.log('callbacks 실행');
       
       if(!email) {
         return false;
       }
-      addUser({id, name: name || '', image, email, username: email?.split('@')[0] || ''});
+      console.log('return true');
       return true;
     },
     async session({ session, token }) {
@@ -82,6 +105,7 @@ const authOptions :NextAuthOptions = {
   },
   pages: {
     signIn: '/auth/signin',
+    error: '/auth/signin'
   }
 };
 
