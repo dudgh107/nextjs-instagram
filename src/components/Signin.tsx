@@ -43,6 +43,21 @@ export default function Signin({providers, callbackUrl}: Props) {
         e.preventDefault();
 
         //signIn(credentalsId, {emailRef : emailRef.current?.value, passwordRef:await bcrypt.hash(passwordRef.current?.value, 10), callbackUrl});
+
+
+
+        if(emailRef.current?.value == ''){
+            alert('E-MAIL을 입력하세요.');
+            return false;
+        }
+
+        if(passwordRef.current?.value == ''){
+            alert('패스워드를 입력하세요.');
+            return false;
+        }
+
+
+
         setLoading(true);
         const result = await signIn('credentials', {
             email: emailRef.current?.value,

@@ -70,7 +70,8 @@ export async function inquireUser(email:string) {
               "username"  : username,
               "name" : name,
               "password" :password,
-              "email" : email
+              "email" : email,
+              "image" : 'https://lh3.googleusercontent.com/a/ACg8ocIy0Em7K7RVkLK70p_DGt68JWVSaGPQL5GF0Br9d8LIgKY=s96-c'
             }
         `
     );

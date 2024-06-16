@@ -3,7 +3,8 @@ import { createPost, getFollowingPostsOf } from "@/service/posts";
 import { widthSessionUser } from "@/app/utils/session";
 
 export async function GET() {
-    
+
+    console.log('api/posts--get');
     return widthSessionUser(async (user) => 
         getFollowingPostsOf(user.username).then((data) =>NextResponse.json(data))
     );

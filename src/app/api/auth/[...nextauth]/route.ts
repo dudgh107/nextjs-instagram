@@ -85,10 +85,12 @@ const authOptions :NextAuthOptions = {
     async session({ session, token }) {
       
       const user = session?.user;
-      
+      console.log('user='+user);
       if(user) {
+        //image가 구글 로그인일때만 가져와서 강제로 하드코딩
         session.user = {
           ...user,
+          image: 'https://lh3.googleusercontent.com/a/ACg8ocIy0Em7K7RVkLK70p_DGt68JWVSaGPQL5GF0Br9d8LIgKY=s96-c',
           username: user.email?.split('@')[0] || '',
           id: token.id as string,
         }
