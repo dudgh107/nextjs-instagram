@@ -56,10 +56,8 @@ export default function Signin({providers, callbackUrl}: Props) {
             return false;
         }
 
-
-
         setLoading(true);
-        const result = await signIn('credentials', {
+        const result = await signIn(credentalsId, {
             email: emailRef.current?.value,
             password: passwordRef.current?.value,
             redirect: false,
