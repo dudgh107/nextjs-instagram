@@ -1,4 +1,4 @@
-import { addUser } from "@/service/user";
+import {addUser, inquireUser} from "@/service/user";
 import NextAuth, { NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
@@ -30,23 +30,52 @@ const authOptions :NextAuthOptions = {
         // (i.e., the request IP address)
         console.log('------------1111-----------------------'+JSON.stringify(credentials));
 
-        //로그인처리
-        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/login`, {
-          method: 'POST',
-          body: JSON.stringify({
-            email: credentials?.email,
-            password: credentials?.password,
-          }),
-          headers: { "Content-Type": "application/json" }
-        })
-        const user = await res.json()
-        console.log('------------조회 user'+JSON.stringify(user));
+        // //로그인처리
+        // const res = await fetch(`${process.env.NEXTAUTH_URL}/api/login`, {
+        //   method: 'POST',
+        //   body: JSON.stringify({
+        //     email: credentials?.email,
+        //     password: credentials?.password,
+        //   }),
+        //   headers: { "Content-Type": "application/json" }
+        // })
+        // const user = await res.json()
+        const {email, password} = credentials;
+        const userInfo = await inquireUser(email);
 
-        const {rcode} = user;
+        console.log('------------조회 user'+JSON.stringify(userInfo));
+
+        let rcode = '';
+        if(userInfo) {
+          console.log('------------111');
+          const user = userInfo;
+
+          console.log('password='+password);
+          console.log('user.password='+user.password);
+          const userResponse = {
+            id: user.id,
+            password: user.password,
+            username: user.username,
+            name: user.name,
+            email: user.email
+          };
+          var bcrypt = require('bcryptjs');
+          if(await bcrypt.compare(password, user.password)){
+
+            rcode = '00';
+          }else
+          {
+            //비밀번호 안맞을때
+            rcode = '10'
+          }
+        }
+        else {
+          rcode = '90'
+        }
 
         if(rcode== '00'){
-          if (user) {
-            return user
+          if (userInfo) {
+            return userInfo
           }
         }
         else if(rcode== '10'){
@@ -59,10 +88,6 @@ const authOptions :NextAuthOptions = {
 
         //console.log('------------조회 rcode='+JSON.stringify(rcode));
 
-        // If no error and we have user data, return it
-        if (user) {
-          return user
-        }
         //const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
         return null
       }
