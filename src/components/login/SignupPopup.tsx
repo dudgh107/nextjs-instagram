@@ -1,9 +1,10 @@
 'use client'
 import { HomeUser, ProfileUser } from '@/model/user';
-import React, { useState, useTransition } from 'react';
+import React, {ChangeEvent, useState, useTransition} from 'react';
 import useMe from '@/hooks/me';
 import { useRouter } from 'next/navigation';
 import GridSpinner from '../ui/GridSpinner';
+import {sign} from "node:crypto";
 
 interface SignupPopupProps {
     closeModel: () => void;
@@ -12,7 +13,7 @@ export default function SignupPopup({closeModel}: SignupPopupProps) {
     const router = useRouter();
     const [error, setError] = useState<string>();
     const [loading, setLoading] = useState(false);
-    const [signup, setSignup] = useState({
+    const [signForm, setSignForm] = useState({
         id: '',
         username: '',
         email: '',
@@ -20,13 +21,20 @@ export default function SignupPopup({closeModel}: SignupPopupProps) {
         confirmpassword: ''
     });
 
+    const handleChange = (e: ChangeEvent<HTMLInputElement>)=>{
+        const {name, value} = e.target;
+//        console.log(name)
+        //console.log(value)
+        setSignForm({...signForm, [name]: value});
+    }
+
     const handleSubmit = async (e:any) => {
         e.preventDefault();
         //signIn(credentalsId, {callbackUrl});
         //이메일, 패스워드 저장
         //pasword
 
-        const {id, username,email, password,confirmpassword} = signup;
+        const {id, username,email, password,confirmpassword} = signForm;
 
         if(id == ''){
             alert('id를 입력하세요.');
@@ -78,13 +86,12 @@ export default function SignupPopup({closeModel}: SignupPopupProps) {
         //저장
         fetch('/api/signup', {
             method: 'POST',
-            body: JSON.stringify({...signup, password:await bcrypt.hash(password, 10)})
+            body: JSON.stringify({...signForm, password:await bcrypt.hash(password, 10)})
         }).then(res => {
             if(!res.ok) {
                 setError('등록중 에러가 발생했습니다.');
                 return;
             }
-            //alert('11');
             closeModel();
         })
             .catch(err => setError('등록중 에러가 발생했습니다.'))
@@ -109,8 +116,8 @@ export default function SignupPopup({closeModel}: SignupPopupProps) {
                                 <input type="text"
                                        className="w-full py-2.5 px-4 rounded-lg bg-gray-100 focus:shadow focus:bg-white focus:outline-none"
                                        id="id" name="id" placeholder="id"
-                                       value={signup.id}
-                                       onChange={e => setSignup({...signup, id: e.target.value})}
+                                       value={signForm.id}
+                                       onChange={handleChange}
                                 />
                             </div>
                             <div className="w-full mt-4">
@@ -118,8 +125,8 @@ export default function SignupPopup({closeModel}: SignupPopupProps) {
                                 <input type="text"
                                        className="w-full py-2.5 px-4 rounded-lg bg-gray-100 focus:shadow focus:bg-white focus:outline-none"
                                        id="username" name="username" placeholder="username"
-                                       value={signup.username}
-                                       onChange={e => setSignup({...signup, username: e.target.value})}
+                                       value={signForm.username}
+                                       onChange={handleChange}
                                 />
                             </div>
 
@@ -127,22 +134,22 @@ export default function SignupPopup({closeModel}: SignupPopupProps) {
                                 <input type="email"
                                        className="w-full py-2.5 px-4 rounded-lg bg-gray-100 focus:shadow focus:bg-white focus:outline-none"
                                        id="email" name="email" placeholder="Email"
-                                       value={signup.email}
-                                       onChange={e => setSignup({...signup, email: e.target.value})}
+                                       value={signForm.email}
+                                       onChange={handleChange}
                                 />
                             </div>
                             <div className="w-full  mt-4 flex justify-between">
                                 <input type="password"
                                        className="bg-gray-100 w-6/12 py-2.5 px-4 rounded-l-lg border-r-2 border-white focus:shadow focus:bg-white focus:outline-none"
-                                       id="password" name="pasword" placeholder="Password"
-                                       value={signup.password}
-                                       onChange={e => setSignup({...signup, password: e.target.value})}
+                                       id="password" name="password" placeholder="Password"
+                                       value={signForm.password}
+                                       onChange={handleChange}
                                 />
                                 <input type="password"
                                        className="bg-gray-100 w-6/12 py-2.5 px-4 rounded-r-lg border-l-2 border-white focus:shadow focus:bg-white focus:outline-none"
-                                       id="confirmpassword" name="confirmpassword" placeholder="Confirm password"
-                                       value={signup.confirmpassword}
-                                       onChange={e => setSignup({...signup, confirmpassword: e.target.value})}
+                                       id="confirmpassword" name="confirmpassword" placeholder="Confirmpassword"
+                                       value={signForm.confirmpassword}
+                                       onChange={handleChange}
                                 />
                             </div>
                             <div className="w-full mt-4">
